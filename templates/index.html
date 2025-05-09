@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestor de Choferes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Gestor de Choferes</h1>
+
+    <form method="POST" action="/registrar">
+        <label for="nombre">Nombre del chofer:</label>
+        <select name="nombre" required>
+            <option value="" disabled selected>Selecciona un chofer</option>
+            {% for chofer in choferes %}
+                <option value="{{ chofer.nombre }}">{{ chofer.nombre }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="accion">Acción:</label>
+        <select name="accion" required>
+            <option value="entrada">Entrada</option>
+            <option value="salida">Salida</option>
+        </select>
+
+
+        <label for="destino">Destino:</label>
+        <input type="text" name="destino" placeholder="Ingrese destino">
+
+        <label for="dirigencia">Dirigencia:</label>
+        <input type="text" name="dirigencia" placeholder="Ingrese dirigencia (si aplica)">
+
+        <button type="submit">Registrar</button>
+    </form>
+    <hr>
+
+    <h2>Historial de Registro</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Hora</th>
+                <th>Fecha</th>
+                <th>Acción</th>
+                <th>Dirigencia</th>
+                <th>Destino</th>
+                <th>Opciones</th> <!-- Cambiado de "Acciones" a "Opciones" -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for fila in historial %}
+            <tr>
+                <td>{{ fila.nombre }}</td>
+                <td>{{ fila.hora }}</td>
+                <td>{{ fila.fecha }}</td>
+                <td>{{ fila.accion }}</td>
+                <td>{{ fila.dirigencia }}</td>
+                <td>{{ fila.destino }}</td>
+                <td>
+                    <!-- Botón Eliminar -->
+                    <form method="POST" action="/eliminar/{{ loop.index0 }}" style="display:inline;">
+                        <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
+                    </form>
+                    <!-- Botón Editar -->
+                    <form method="GET" action="/editar/{{ loop.index0 }}" style="display:inline;">
+                        <button type="submit">Editar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <button onclick="window.print()">Imprimir / Guardar como PDF</button>
+
+    <footer>
+        <p>Realizado por Moisés Vásquez para el uso del Poder Judicial de Loreto</p>
+    </footer>
+</body>
+</html>

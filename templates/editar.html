@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Registro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Editar Registro</h1>
+
+    <form method="POST">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" value="{{ registro.nombre }}" required><br>
+
+        <label>Hora:</label>
+        <input type="text" name="hora" value="{{ registro.hora }}" required><br>
+
+        <label>Fecha:</label>
+        <input type="text" name="fecha" value="{{ registro.fecha }}" required><br>
+
+        <label>Acción:</label>
+        <input type="text" name="accion" value="{{ registro.accion }}" readonly><br>
+
+        <label>Dirigencia:</label>
+        <input type="text" name="dirigencia" value="{{ registro.dirigencia }}"><br>
+
+        <label>Destino:</label>
+        <input type="text" name="destino" value="{{ registro.destino }}"><br>
+
+        <button type="submit">Guardar Cambios</button>
+        <a href="/">Cancelar</a>
+    </form>
+</body>
+</html>

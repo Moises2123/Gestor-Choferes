@@ -1,0 +1,133 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+    margin: 0;
+    padding: 0 20px;
+}
+
+h1, h2 {
+    color: #C8102E; /* Rojo institucional */
+    text-align: center;
+    margin-top: 20px;
+}
+
+form {
+    background-color: #fff;
+    padding: 20px;
+    border: 2px solid #C8102E;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20px auto;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+button,
+a.button {
+    background-color: #C8102E;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin: 5px 0;
+    transition: background-color 0.3s ease;
+}
+
+button:hover,
+a.button:hover {
+    background-color: #A50E26;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    background-color: #fff;
+}
+
+table, th, td {
+    border: 1px solid #4B4B4B; /* Gris neutro */
+}
+
+th {
+    background-color: #C8102E;
+    color: white;
+    padding: 10px;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #C8102E;
+    color: white;
+    margin-top: 40px;
+    font-size: 14px;
+}
+
+/* Botones de acción en tabla */
+td a,
+td form button {
+    margin: 2px;
+    font-size: 0.9em;
+}
+
+/* Estilos para impresión */
+@media print {
+    form, button, .button, footer {
+        display: none;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        color: #000;
+        background-color: #fff;
+        padding: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        padding: 8px;
+        border: 1px solid #ccc;
+    }
+
+    th {
+        background-color: #e0e0e0;
+        color: #000;
+    }
+
+    h1 {
+        text-align: center;
+        color: #000;
+    }
+}
