@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, flash
 import csv
-from datetime import datetime
+from datetime import datetime, timezone  # Importa timezone
+import pytz  # Asegúrate de que pytz esté instalado
 
 app = Flask(__name__)
 app.secret_key = 'clave_secreta'  # Necesaria para usar flash
@@ -70,9 +71,13 @@ def registrar():
         hora = hora_evento
         fecha = fecha_evento
     else:
-        now = datetime.now()
-        hora = now.strftime('%H:%M:%S')
-        fecha = now.strftime('%Y-%m-%d')
+        # Obtén la hora actual en UTC
+        now_utc = datetime.now(timezone.utc)  # Usa datetime.now(timezone.utc)
+        # Convierte la hora UTC a la zona horaria de Perú
+        peru_timezone = pytz.timezone('America/Lima')
+        now_peru = now_utc.astimezone(peru_timezone)
+        hora = now_peru.strftime('%H:%M:%S')
+        fecha = now_peru.strftime('%Y-%m-%d')
 
     choferes = cargar_choferes()
     for chofer in choferes:
