@@ -8,12 +8,13 @@
 <body>
     <h1>Gestor de Choferes</h1>
 
+    <!-- Formulario para registrar entrada/salida -->
     <form method="POST" action="/registrar">
         <label for="nombre">Nombre del chofer:</label>
         <select name="nombre" required>
             <option value="" disabled selected>Selecciona un chofer</option>
             {% for chofer in choferes %}
-                <option value="{{ chofer.nombre }}">{{ chofer.nombre }}</option>
+                <option value="{{ chofer['nombre'] }}">{{ chofer['nombre'] }}</option>
             {% endfor %}
         </select>
 
@@ -23,17 +24,28 @@
             <option value="salida">Salida</option>
         </select>
 
-
         <label for="destino">Destino:</label>
         <input type="text" name="destino" placeholder="Ingrese destino">
 
-        <label for="dirigencia">Dirigencia:</label>
-        <input type="text" name="dirigencia" placeholder="Ingrese dirigencia (si aplica)">
+        <label for="dirigencia">Diligencia:</label>
+        <input type="text" name="dirigencia" placeholder="Ingrese diligencia (si aplica)">
+
+        <label for="sustento">Sustento:</label>
+        <input type="text" name="sustento" placeholder="Ingrese sustento">
+
+        <label for="solicitud_movilidad">Solicitud de movilidad:</label>
+        <input type="text" name="solicitud_movilidad" placeholder="Ingrese solicitud de movilidad">
+
+        <label for="quien_dirige">Quién realiza la diligencia:</label>
+        <input type="text" name="quien_dirige" placeholder="Nombre del responsable">
+
+
 
         <button type="submit">Registrar</button>
     </form>
     <hr>
 
+    <!-- Tabla para mostrar el historial -->
     <h2>Historial de Registro</h2>
     <table>
         <thead>
@@ -42,20 +54,26 @@
                 <th>Hora</th>
                 <th>Fecha</th>
                 <th>Acción</th>
-                <th>Dirigencia</th>
+                <th>Diligencia</th>
                 <th>Destino</th>
-                <th>Opciones</th> <!-- Cambiado de "Acciones" a "Opciones" -->
+                <th>Sustento</th>
+                <th>Solicitud de movilidad</th>
+                <th>Quién realiza la diligencia</th>
+                <th>Opciones</th>
             </tr>
         </thead>
         <tbody>
             {% for fila in historial %}
             <tr>
-                <td>{{ fila.nombre }}</td>
-                <td>{{ fila.hora }}</td>
-                <td>{{ fila.fecha }}</td>
-                <td>{{ fila.accion }}</td>
-                <td>{{ fila.dirigencia }}</td>
-                <td>{{ fila.destino }}</td>
+                <td>{{ fila['nombre'] }}</td>
+                <td>{{ fila['hora'] }}</td>
+                <td>{{ fila['fecha'] }}</td>
+                <td>{{ fila['accion'] }}</td>
+                <td>{{ fila['dirigencia'] }}</td>
+                <td>{{ fila['destino'] }}</td>
+                <td>{{ fila['sustento'] }}</td>
+                <td>{{ fila['solicitud_movilidad'] }}</td>
+                <td>{{ fila['quien_dirige'] }}</td>
                 <td>
                     <!-- Botón Eliminar -->
                     <form method="POST" action="/eliminar/{{ loop.index0 }}" style="display:inline;">

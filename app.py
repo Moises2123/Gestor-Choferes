@@ -1,15 +1,15 @@
+# app.py
 from flask import Flask, render_template, request, redirect, flash
 import csv
-from datetime import datetime, timezone  # Importa timezone
-import pytz  # Asegúrate de que pytz esté instalado
+from datetime import datetime, timezone
+import pytz
 
 app = Flask(__name__)
-app.secret_key = 'clave_secreta'  # Necesaria para usar flash
+app.secret_key = 'clave_secreta'
 
 CHOFERES_ARCHIVO = 'choferes.csv'
 HISTORIAL_ARCHIVO = 'historial.csv'
 
-# Cargar choferes desde archivo CSV
 def cargar_choferes():
     choferes = []
     try:
@@ -18,10 +18,9 @@ def cargar_choferes():
             for row in reader:
                 choferes.append(row)
     except FileNotFoundError:
-        pass  # Si el archivo no existe, simplemente retorna una lista vacía
+        pass
     return choferes
 
-# Guardar lista de choferes
 def guardar_choferes(choferes):
     with open(CHOFERES_ARCHIVO, 'w', newline='', encoding='utf-8') as csvfile:
         fieldnames = ['id', 'nombre', 'estado']
@@ -29,7 +28,6 @@ def guardar_choferes(choferes):
         writer.writeheader()
         writer.writerows(choferes)
 
-# Cargar historial como lista de diccionarios
 def cargar_historial():
     try:
         with open(HISTORIAL_ARCHIVO, newline='', encoding='utf-8') as f:
@@ -38,10 +36,12 @@ def cargar_historial():
     except FileNotFoundError:
         return []
 
-# Guardar historial completo
 def guardar_historial(historial):
     with open(HISTORIAL_ARCHIVO, 'w', newline='', encoding='utf-8') as f:
-        fieldnames = ['nombre', 'hora', 'fecha', 'accion', 'dirigencia', 'destino']
+        fieldnames = [
+            'nombre', 'hora', 'fecha', 'accion', 'dirigencia', 'destino',
+            'sustento', 'solicitud_movilidad', 'quien_dirige'
+        ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(historial)
@@ -56,24 +56,23 @@ def index():
 def registrar():
     nombre = request.form.get('nombre')
     accion = request.form.get('accion')
-
-    if not accion:
-        flash('Error: El campo "Acción" es obligatorio.')
-        return redirect('/')  # Redirige de nuevo a la página principal
-
-    destino = request.form.get('destino', '')
-    dirigencia = request.form.get('dirigencia', '')
+    destino = request.form.get('destino', '').strip()
+    dirigencia = request.form.get('dirigencia', '').strip()
+    sustento = request.form.get('sustento', '').strip()
+    solicitud_movilidad = request.form.get('solicitud_movilidad', '').strip()
+    quien_dirige = request.form.get('quien_dirige', '').strip()
     hora_evento = request.form.get('hora_evento')
     fecha_evento = request.form.get('fecha_evento')
 
-    # Si se proporciona hora_evento y fecha_evento, se usan, si no, se usa la hora y fecha del servidor
+    if not nombre or not accion:
+        flash('El nombre y la acción son obligatorios.')
+        return redirect('/')
+
     if hora_evento and fecha_evento:
         hora = hora_evento
         fecha = fecha_evento
     else:
-        # Obtén la hora actual en UTC
-        now_utc = datetime.now(timezone.utc)  # Usa datetime.now(timezone.utc)
-        # Convierte la hora UTC a la zona horaria de Perú
+        now_utc = datetime.now(timezone.utc)
         peru_timezone = pytz.timezone('America/Lima')
         now_peru = now_utc.astimezone(peru_timezone)
         hora = now_peru.strftime('%H:%M:%S')
@@ -92,16 +91,18 @@ def registrar():
         'fecha': fecha,
         'accion': accion,
         'dirigencia': dirigencia,
-        'destino': destino
+        'destino': destino,
+        'sustento': sustento,
+        'solicitud_movilidad': solicitud_movilidad,
+        'quien_dirige': quien_dirige
     }
 
     historial = cargar_historial()
     historial.append(nuevo_registro)
     guardar_historial(historial)
 
-    flash('Registro guardado exitosamente.') # Agrega un mensaje de éxito
+    flash('Registro guardado exitosamente.')
     return redirect('/')
-
 
 @app.route("/eliminar/<int:indice>", methods=['POST'])
 def eliminar(indice):
@@ -118,25 +119,26 @@ def eliminar(indice):
 def editar(indice):
     historial = cargar_historial()
 
-    if not (0 <= indice < len(historial)): #verifica que el indice sea valido
+    if not (0 <= indice < len(historial)):
         flash('Error: Índice de registro inválido.')
         return redirect('/')
 
     if request.method == 'POST':
-        # Actualizar el registro con los nuevos datos del formulario
         historial[indice] = {
             'nombre': request.form['nombre'],
             'hora': request.form['hora'],
             'fecha': request.form['fecha'],
             'accion': request.form['accion'],
             'dirigencia': request.form['dirigencia'],
-            'destino': request.form['destino']
+            'destino': request.form['destino'],
+            'sustento': request.form['sustento'],
+            'solicitud_movilidad': request.form['solicitud_movilidad'],
+            'quien_dirige': request.form['quien_dirige']
         }
         guardar_historial(historial)
         flash('Registro editado exitosamente.')
         return redirect('/')
 
-    # Obtener el registro para mostrar en el formulario
     registro = historial[indice]
     return render_template("editar.html", registro=registro, indice=indice)
 
