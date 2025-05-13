@@ -1,5 +1,4 @@
-# app.py
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, jsonify
 import csv
 from datetime import datetime, timezone
 import pytz
@@ -101,8 +100,8 @@ def registrar():
     historial.append(nuevo_registro)
     guardar_historial(historial)
 
-    flash('Registro guardado exitosamente.')
-    return redirect('/')
+    # Devuelve los datos del nuevo registro como JSON
+    return jsonify(nuevo_registro)
 
 @app.route("/eliminar/<int:indice>", methods=['POST'])
 def eliminar(indice):
