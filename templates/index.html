@@ -8,7 +8,6 @@
 <body>
     <h1>Gestor de Choferes</h1>
 
-    <!-- Formulario para registrar entrada/salida -->
     <form method="POST" action="/registrar">
         <label for="nombre">Nombre del chofer:</label>
         <select name="nombre" required>
@@ -45,9 +44,8 @@
     </form>
     <hr>
 
-    <!-- Tabla para mostrar el historial -->
     <h2>Historial de Registro</h2>
-    <table>
+    <table id="historial-table">
         <thead>
             <tr>
                 <th>Nombre</th>
@@ -75,11 +73,9 @@
                 <td>{{ fila['solicitud_movilidad'] }}</td>
                 <td>{{ fila['quien_dirige'] }}</td>
                 <td>
-                    <!-- Botón Eliminar -->
                     <form method="POST" action="/eliminar/{{ loop.index0 }}" style="display:inline;">
                         <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
                     </form>
-                    <!-- Botón Editar -->
                     <form method="GET" action="/editar/{{ loop.index0 }}" style="display:inline;">
                         <button type="submit">Editar</button>
                     </form>
@@ -95,5 +91,49 @@
     <footer>
         <p>Realizado por Moisés Vásquez para el uso del Poder Judicial de Loreto</p>
     </footer>
+    <script>
+        function agregarFilaHistorial(registro) {
+            const tabla = document.getElementById('historial-table').getElementsByTagName('tbody')[0];
+            const nuevaFila = tabla.insertRow();
+
+            const nombreCell = nuevaFila.insertCell();
+            nombreCell.textContent = registro.nombre;
+
+            const horaCell = nuevaFila.insertCell();
+            horaCell.textContent = registro.hora;
+
+            const fechaCell = nuevaFila.insertCell();
+            fechaCell.textContent = registro.fecha;
+
+            const accionCell = nuevaFila.insertCell();
+            accionCell.textContent = registro.accion;
+            
+            const diligenciaCell = nuevaFila.insertCell();
+            diligenciaCell.textContent = registro.dirigencia;
+
+            const destinoCell = nuevaFila.insertCell();
+            destinoCell.textContent = registro.destino;
+
+            const sustentoCell = nuevaFila.insertCell();
+            sustentoCell.textContent = registro.sustento;
+
+            const solicitudMovilidadCell = nuevaFila.insertCell();
+            solicitudMovilidadCell.textContent = registro.solicitud_movilidad;
+
+            const quienDirigeCell = nuevaFila.insertCell();
+            quienDirigeCell.textContent = registro.quien_dirige;
+
+
+            const opcionesCell = nuevaFila.insertCell();
+            opcionesCell.innerHTML = `
+                <form method="POST" action="/eliminar/${tabla.rows.length - 2}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
+                </form>
+                <form method="GET" action="/editar/${tabla.rows.length - 2}" style="display:inline;">
+                    <button type="submit">Editar</button>
+                </form>
+            `;
+        }
+    </script>
 </body>
 </html>
