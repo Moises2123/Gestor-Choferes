@@ -100,11 +100,16 @@ def registrar():
     historial.append(nuevo_registro)
     guardar_historial(historial)
 
+<<<<<<< HEAD
     # Devuelve los datos del nuevo registro como JSON junto con el índice
     return jsonify({
         'registro': nuevo_registro,
         'indice': len(historial) - 1
     })
+=======
+    # Devuelve los datos del nuevo registro como JSON
+    return jsonify(nuevo_registro)
+>>>>>>> a4edbf928c1b8920950c345c7dae6adf7ff7d5dc
 
 @app.route("/eliminar/<int:indice>", methods=['POST'])
 def eliminar(indice):
