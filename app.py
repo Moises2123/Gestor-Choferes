@@ -1,5 +1,4 @@
-# app.py
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, jsonify
 import csv
 from datetime import datetime, timezone
 import pytz
@@ -101,8 +100,11 @@ def registrar():
     historial.append(nuevo_registro)
     guardar_historial(historial)
 
-    flash('Registro guardado exitosamente.')
-    return redirect('/')
+    # Devuelve los datos del nuevo registro como JSON junto con el índice
+    return jsonify({
+        'registro': nuevo_registro,
+        'indice': len(historial) - 1
+    })
 
 @app.route("/eliminar/<int:indice>", methods=['POST'])
 def eliminar(indice):
@@ -124,16 +126,17 @@ def editar(indice):
         return redirect('/')
 
     if request.method == 'POST':
+        # Captura todos los campos, incluyendo quien_dirige
         historial[indice] = {
-            'nombre': request.form['nombre'],
-            'hora': request.form['hora'],
-            'fecha': request.form['fecha'],
-            'accion': request.form['accion'],
-            'dirigencia': request.form['dirigencia'],
-            'destino': request.form['destino'],
-            'sustento': request.form['sustento'],
-            'solicitud_movilidad': request.form['solicitud_movilidad'],
-            'quien_dirige': request.form['quien_dirige']
+            'nombre': request.form.get('nombre', ''),
+            'hora': request.form.get('hora', ''),
+            'fecha': request.form.get('fecha', ''),
+            'accion': request.form.get('accion', ''),
+            'dirigencia': request.form.get('dirigencia', ''),
+            'destino': request.form.get('destino', ''),
+            'sustento': request.form.get('sustento', ''),
+            'solicitud_movilidad': request.form.get('solicitud_movilidad', ''),
+            'quien_dirige': request.form.get('quien_dirige', '')
         }
         guardar_historial(historial)
         flash('Registro editado exitosamente.')

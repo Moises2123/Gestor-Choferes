@@ -8,7 +8,7 @@
 <body>
     <h1>Gestor de Choferes</h1>
 
-    <form method="POST" action="/registrar">
+    <form id="registro-form" method="POST" action="/registrar">
         <label for="nombre">Nombre del chofer:</label>
         <select name="nombre" required>
             <option value="" disabled selected>Selecciona un chofer</option>
@@ -37,8 +37,6 @@
 
         <label for="quien_dirige">Quién realiza la diligencia:</label>
         <input type="text" name="quien_dirige" placeholder="Nombre del responsable">
-
-
 
         <button type="submit">Registrar</button>
     </form>
@@ -92,48 +90,58 @@
         <p>Realizado por Moisés Vásquez para el uso del Poder Judicial de Loreto</p>
     </footer>
     <script>
-        function agregarFilaHistorial(registro) {
+        // Función para agregar una nueva fila al historial sin refrescar la página
+        function agregarFilaHistorial(registro, indice) {
             const tabla = document.getElementById('historial-table').getElementsByTagName('tbody')[0];
             const nuevaFila = tabla.insertRow();
 
-            const nombreCell = nuevaFila.insertCell();
-            nombreCell.textContent = registro.nombre;
-
-            const horaCell = nuevaFila.insertCell();
-            horaCell.textContent = registro.hora;
-
-            const fechaCell = nuevaFila.insertCell();
-            fechaCell.textContent = registro.fecha;
-
-            const accionCell = nuevaFila.insertCell();
-            accionCell.textContent = registro.accion;
-            
-            const diligenciaCell = nuevaFila.insertCell();
-            diligenciaCell.textContent = registro.dirigencia;
-
-            const destinoCell = nuevaFila.insertCell();
-            destinoCell.textContent = registro.destino;
-
-            const sustentoCell = nuevaFila.insertCell();
-            sustentoCell.textContent = registro.sustento;
-
-            const solicitudMovilidadCell = nuevaFila.insertCell();
-            solicitudMovilidadCell.textContent = registro.solicitud_movilidad;
-
-            const quienDirigeCell = nuevaFila.insertCell();
-            quienDirigeCell.textContent = registro.quien_dirige;
-
+            nuevaFila.insertCell().textContent = registro.nombre;
+            nuevaFila.insertCell().textContent = registro.hora;
+            nuevaFila.insertCell().textContent = registro.fecha;
+            nuevaFila.insertCell().textContent = registro.accion;
+            nuevaFila.insertCell().textContent = registro.dirigencia;
+            nuevaFila.insertCell().textContent = registro.destino;
+            nuevaFila.insertCell().textContent = registro.sustento;
+            nuevaFila.insertCell().textContent = registro.solicitud_movilidad;
+            nuevaFila.insertCell().textContent = registro.quien_dirige;
 
             const opcionesCell = nuevaFila.insertCell();
             opcionesCell.innerHTML = `
-                <form method="POST" action="/eliminar/${tabla.rows.length - 2}" style="display:inline;">
+                <form method="POST" action="/eliminar/${indice}" style="display:inline;">
                     <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
                 </form>
-                <form method="GET" action="/editar/${tabla.rows.length - 2}" style="display:inline;">
+                <form method="GET" action="/editar/${indice}" style="display:inline;">
                     <button type="submit">Editar</button>
                 </form>
             `;
         }
+
+        // Manejar el envío del formulario sin refrescar la página
+        document.getElementById('registro-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            fetch('/registrar', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Agregar el nuevo registro a la tabla
+                agregarFilaHistorial(data.registro, data.indice);
+                
+                // Limpiar el formulario
+                document.getElementById('registro-form').reset();
+                
+                // Mostrar mensaje de éxito (opcional)
+                alert('Registro agregado correctamente');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ocurrió un error al registrar');
+            });
+        });
     </script>
 </body>
 </html>
