@@ -2,146 +2,171 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestor de Choferes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Choferes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.12/sweetalert2.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+
 </head>
 <body>
-    <h1>Gestor de Choferes</h1>
-
-    <form id="registro-form" method="POST" action="/registrar">
-        <label for="nombre">Nombre del chofer:</label>
-        <select name="nombre" required>
-            <option value="" disabled selected>Selecciona un chofer</option>
-            {% for chofer in choferes %}
-                <option value="{{ chofer['nombre'] }}">{{ chofer['nombre'] }}</option>
-            {% endfor %}
-        </select>
-
-        <label for="accion">Acción:</label>
-        <select name="accion" required>
-            <option value="entrada">Entrada</option>
-            <option value="salida">Salida</option>
-        </select>
-
-        <label for="destino">Destino:</label>
-        <input type="text" name="destino" placeholder="Ingrese destino">
-
-        <label for="dirigencia">Diligencia:</label>
-        <input type="text" name="dirigencia" placeholder="Ingrese diligencia (si aplica)">
-
-        <label for="sustento">Sustento:</label>
-        <input type="text" name="sustento" placeholder="Ingrese sustento">
-
-        <label for="solicitud_movilidad">Solicitud de movilidad:</label>
-        <input type="text" name="solicitud_movilidad" placeholder="Ingrese solicitud de movilidad">
-
-        <label for="quien_dirige">Quién realiza la diligencia:</label>
-        <input type="text" name="quien_dirige" placeholder="Nombre del responsable">
-
-        <button type="submit">Registrar</button>
-    </form>
-    <hr>
-
-    <h2>Historial de Registro</h2>
-    <table id="historial-table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Hora</th>
-                <th>Fecha</th>
-                <th>Acción</th>
-                <th>Diligencia</th>
-                <th>Destino</th>
-                <th>Sustento</th>
-                <th>Solicitud de movilidad</th>
-                <th>Quién realiza la diligencia</th>
-                <th>Opciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for fila in historial %}
-            <tr>
-                <td>{{ fila['nombre'] }}</td>
-                <td>{{ fila['hora'] }}</td>
-                <td>{{ fila['fecha'] }}</td>
-                <td>{{ fila['accion'] }}</td>
-                <td>{{ fila['dirigencia'] }}</td>
-                <td>{{ fila['destino'] }}</td>
-                <td>{{ fila['sustento'] }}</td>
-                <td>{{ fila['solicitud_movilidad'] }}</td>
-                <td>{{ fila['quien_dirige'] }}</td>
-                <td>
-                    <form method="POST" action="/eliminar/{{ loop.index0 }}" style="display:inline;">
-                        <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
-                    </form>
-                    <form method="GET" action="/editar/{{ loop.index0 }}" style="display:inline;">
-                        <button type="submit">Editar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <br>
-    <button onclick="window.print()">Imprimir / Guardar como PDF</button>
-
-    <footer>
-        <p>Realizado por Moisés Vásquez para el uso del Poder Judicial de Loreto</p>
-    </footer>
-    <script>
-        // Función para agregar una nueva fila al historial sin refrescar la página
-        function agregarFilaHistorial(registro, indice) {
-            const tabla = document.getElementById('historial-table').getElementsByTagName('tbody')[0];
-            const nuevaFila = tabla.insertRow();
-
-            nuevaFila.insertCell().textContent = registro.nombre;
-            nuevaFila.insertCell().textContent = registro.hora;
-            nuevaFila.insertCell().textContent = registro.fecha;
-            nuevaFila.insertCell().textContent = registro.accion;
-            nuevaFila.insertCell().textContent = registro.dirigencia;
-            nuevaFila.insertCell().textContent = registro.destino;
-            nuevaFila.insertCell().textContent = registro.sustento;
-            nuevaFila.insertCell().textContent = registro.solicitud_movilidad;
-            nuevaFila.insertCell().textContent = registro.quien_dirige;
-
-            const opcionesCell = nuevaFila.insertCell();
-            opcionesCell.innerHTML = `
-                <form method="POST" action="/eliminar/${indice}" style="display:inline;">
-                    <button type="submit" onclick="return confirm('¿Seguro que deseas eliminar este registro?');">Eliminar</button>
-                </form>
-                <form method="GET" action="/editar/${indice}" style="display:inline;">
-                    <button type="submit">Editar</button>
-                </form>
-            `;
-        }
-
-        // Manejar el envío del formulario sin refrescar la página
-        document.getElementById('registro-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <!-- Sidebar -->
+            <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+                <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                    <a href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-5 d-none d-sm-inline">Gestión de Choferes</span>
+                    </a>
+                    <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link align-middle px-0 text-white active" onclick="mostrarFormulario()">
+                                <i class="fas fa-plus-circle"></i> <span class="ms-1 d-none d-sm-inline">Nuevo Registro</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link px-0 align-middle text-white" onclick="mostrarHistorial()">
+                                <i class="fas fa-history"></i> <span class="ms-1 d-none d-sm-inline">Historial</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown pb-4">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://github.com/mdo.png" alt="hugenerd" width="30" height="30" class="rounded-circle">
+                            <span class="d-none d-sm-inline mx-1">Administrador</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                            <li><a class="dropdown-item" href="#">Configuración</a></li>
+                            <li><a class="dropdown-item" href="#">Perfil</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Cerrar Sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
             
-            const formData = new FormData(this);
-            
-            fetch('/registrar', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Agregar el nuevo registro a la tabla
-                agregarFilaHistorial(data.registro, data.indice);
-                
-                // Limpiar el formulario
-                document.getElementById('registro-form').reset();
-                
-                // Mostrar mensaje de éxito (opcional)
-                alert('Registro agregado correctamente');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Ocurrió un error al registrar');
-            });
-        });
-    </script>
+            <!-- Contenido Principal -->
+            <div class="col py-3">
+                <!-- Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2" id="pageTitleHeader">Sistema de Gestión de Choferes</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <span id="currentDateTime" class="btn btn-sm btn-outline-secondary"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de formulario de registro -->
+                <div id="formularioRegistro" class="animate__animated animate__fadeIn">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Registro de Movilidad</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="registroForm">
+                                <input type="hidden" id="registroId" value="">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="nombre_chofer" class="form-label">Nombre del Chofer</label>
+                                        <select class="form-select" id="nombre_chofer" required>
+                                            <option value="" selected disabled>Seleccione un chofer</option>
+                                            {% for chofer in choferes %}
+                                            <option value="{{ chofer }}">{{ chofer }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="tipo" class="form-label">Tipo de Registro</label>
+                                        <select class="form-select" id="tipo" required>
+                                            <option value="" selected disabled>Seleccione tipo</option>
+                                            <option value="Entrada">Entrada</option>
+                                            <option value="Salida">Salida</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="destino" class="form-label">Destino</label>
+                                        <input type="text" class="form-control" id="destino" placeholder="Ingrese el destino" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="diligencia" class="form-label">Diligencia</label>
+                                        <input type="text" class="form-control" id="diligencia" placeholder="Ingrese la diligencia" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="sustento" class="form-label">Sustento</label>
+                                        <input type="text" class="form-control" id="sustento" placeholder="Ingrese el sustento" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="solicitud" class="form-label">Solicitud de Movilidad</label>
+                                        <input type="text" class="form-control" id="solicitud" placeholder="Ingrese la solicitud" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="responsable" class="form-label">Quien realiza la diligencia</label>
+                                        <input type="text" class="form-control" id="responsable" placeholder="Ingrese el responsable" required>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <button type="button" class="btn btn-secondary me-md-2" onclick="limpiarFormulario()">Limpiar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de historial -->
+                <div id="historialRegistros" class="animate__animated animate__fadeIn" style="display: none;">
+                    <div class="card shadow">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Historial de Registros</h5>
+                            <button class="btn btn-sm btn-light" onclick="recargarHistorial()">
+                                <i class="fas fa-sync-alt"></i> Actualizar
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover table-sm">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Chofer</th>
+                                            <th>Tipo</th>
+                                            <th>Destino</th>
+                                            <th>Diligencia</th>
+                                            <th>Sustento</th>
+                                            <th>Solicitud</th>
+                                            <th>Responsable</th>
+                                            <th>Fecha y Hora</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaRegistros">
+                                        <!-- Aquí se cargarán los registros -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.12/sweetalert2.all.min.js"></script>
+    <script src="/static/js/script.js"></script>
 </body>
 </html>
